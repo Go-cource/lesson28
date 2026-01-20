@@ -33,18 +33,31 @@ func main() {
 	db := client.Database("orders")
 	ordersCollection := db.Collection("orders")
 
-	newOrder := Order{
-		Id:        primitive.NewObjectID(),
-		Name:      "Vladimir",
-		Product:   "Chicken Burger",
-		Quantity:  1,
-		CreatedAt: time.Now().Format("2006/01/02 15:04:05"),
-	}
-	_, err = ordersCollection.InsertOne(ctx, newOrder)
+	var VladimirsOrder Order
+	err = ordersCollection.FindOne(ctx, bson.M{"createdAt": "2026/01/20 21:25:40"}).Decode(&VladimirsOrder)
 	if err != nil {
-		fmt.Println("Error with Insert: ", err)
-		return
+		fmt.Println(err)
 	}
+	_, err = ordersCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": VladimirsOrder.Id},
+		bson.M{"$set": bson.M{
+			"product": "Hamburger",
+		}},
+	)
+
+	// newOrder := Order{
+	// 	Id:        primitive.NewObjectID(),
+	// 	Name:      "Vladimir",
+	// 	Product:   "Chicken Burger",
+	// 	Quantity:  1,
+	// 	CreatedAt: time.Now().Format("2006/01/02 15:04:05"),
+	// }
+	// _, err = ordersCollection.InsertOne(ctx, newOrder)
+	// if err != nil {
+	// 	fmt.Println("Error with Insert: ", err)
+	// 	return
+	// }
 
 	cursor, err := ordersCollection.Find(ctx, bson.M{"name": "Vladimir"})
 	if err != nil {
