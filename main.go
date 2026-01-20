@@ -33,12 +33,25 @@ func main() {
 	db := client.Database("orders")
 	ordersCollection := db.Collection("orders")
 
-	cursor, err := ordersCollection.Find(ctx, bson.M{})
+	newOrder := Order{
+		Name:      "Vladimir",
+		Product:   "Chicken Burger",
+		Quantity:  1,
+		CreatedAt: "2026/01/20 21:13:09",
+	}
+	_, err = ordersCollection.InsertOne(ctx, newOrder)
+	if err != nil {
+		fmt.Println("Error with Insert: ", err)
+		return
+	}
+
+	cursor, err := ordersCollection.Find(ctx, bson.M{"name": "Vladimir"})
 	if err != nil {
 		fmt.Println("Find error: ", err)
 		return
 	}
 	defer cursor.Close(ctx)
+
 	var orders []Order
 	err = cursor.All(ctx, &orders)
 	if err != nil {
