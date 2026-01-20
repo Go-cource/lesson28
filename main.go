@@ -34,10 +34,11 @@ func main() {
 	ordersCollection := db.Collection("orders")
 
 	newOrder := Order{
+		Id:        primitive.NewObjectID(),
 		Name:      "Vladimir",
 		Product:   "Chicken Burger",
 		Quantity:  1,
-		CreatedAt: "2026/01/20 21:13:09",
+		CreatedAt: time.Now().Format("2006/01/02 15:04:05"),
 	}
 	_, err = ordersCollection.InsertOne(ctx, newOrder)
 	if err != nil {
